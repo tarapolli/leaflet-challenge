@@ -1,4 +1,4 @@
-                    // day 1 activity 10
+                   // day 1 activity 10
 // Store our API endpoint inside queryUrl
 // var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=" +
 //   "2014-01-02&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
@@ -11,7 +11,32 @@ d3.json(queryUrl).then(function(data) {
 // d3.json(queryUrl, function(data) {   
   // Once we get a response, send the data.features object to the createFeatures function
   console.log(data.features);
-  
+  createFeatures(data.features);
+});
+
+
+
+function createFeatures(earthquakeData) {
+
+  // Define a function we want to run once for each feature in the features array
+  // Give each feature a popup describing the place and time of the earthquake
+  function onEachFeature(feature, layer) {
+    layer.bindPopup("<h3>" + feature.properties.place +
+      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+  }
+
+  // // Create a GeoJSON layer containing the features array on the earthquakeData object
+  // // Run the onEachFeature function once for each piece of data in the array
+  var earthquakes = L.geoJSON(earthquakeData, {
+    onEachFeature: onEachFeature
+  });
+
+  // Sending our earthquakes layer to the createMap function
+  createMap(earthquakes);
+}
+
+function createMap(earthquakes) {
+
   // Define streetmap and darkmap layers
   var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -19,8 +44,9 @@ d3.json(queryUrl).then(function(data) {
     maxZoom: 18,
     zoomOffset: -1,
     id: "mapbox/streets-v11",
-    accessToken: API_KEY })
-  
+    accessToken: API_KEY
+  });
+
 //   var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
 //     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
 //     maxZoom: 18,
@@ -35,9 +61,9 @@ d3.json(queryUrl).then(function(data) {
   };
 
   // Create overlay object to hold our overlay layer
-  // var overlayMaps = {
-  //   Earthquakes: earthquakes
-  // };
+  var overlayMaps = {
+    Earthquakes: earthquakes
+  };
 
   // Create our map of San Francisco, giving it the streetmap and earthquakes layers to display on load
   var myMap = L.map("mapid", {
@@ -45,44 +71,39 @@ d3.json(queryUrl).then(function(data) {
       37.09, -122.42
     ],
     zoom: 3,
-    layers: [streetmap]
+    layers: [streetmap, earthquakes]
   });
 
 // Loop through the cities array and create one marker for each city object
-for (var i = 0; i < data.features.length; i++) {
+for (var i = 0; i < countries.length; i++) {
 
   // Conditionals for countries points
-  // var color = "";
-  var color = data.features[i].geometry.coordinates[2];
-//   console.log(color);
-  if (color < 50) {
+  var color = "";
+  if (countries[i].points > 200) {
     color = "yellow";
   }
-  else if (color < 75) {
+  else if (countries[i].points > 100) {
     color = "blue";
   }
-  else if (color <200) {
+  else if (countries[i].points > 90) {
     color = "green";
   }
   else {
     color = "red";
   }
 
-  coordinates = data.features[i].geometry.coordinates.slice(0,2)
-  // console.log(coordinates)
-  // radius is earthquake magnitute
-  radius = data.features[i].properties.mag;
-  // console.log(radius);
-
   // Add circles to map
-  L.circle(data.features.coordinates, {
+  L.circle(countries[i].location, {
     fillOpacity: 0.75,
     color: "white",
     fillColor: color,
     // Adjust radius
-    radius: data.features[i].radius, * 1500
-  }).bindPopup("<h1>" + data.features[i].coordinates + "</h1> <hr> <h3>Points: " + data.features[i].radius + "</h3>").addTo(myMap);
+    radius: countries[i].points * 1500
+  }).bindPopup("<h1>" + countries[i].name + "</h1> <hr> <h3>Points: " + countries[i].points + "</h3>").addTo(myMap);
 }
+
+
+
 
 
   // Create a layer control
@@ -91,7 +112,4 @@ for (var i = 0; i < data.features.length; i++) {
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
-
-})
-
-
+}
