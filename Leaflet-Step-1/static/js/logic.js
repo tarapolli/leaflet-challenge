@@ -3,14 +3,18 @@
 // var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=" +
 //   "2014-01-02&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
 
-  var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson" 
+  var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"; 
  
   
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function(data) {
+// d3.json(queryUrl, function(data) {   
   // Once we get a response, send the data.features object to the createFeatures function
+  console.log(data.features);
   createFeatures(data.features);
 });
+
+
 
 function createFeatures(earthquakeData) {
 
@@ -43,17 +47,17 @@ function createMap(earthquakes) {
     accessToken: API_KEY
   });
 
-  var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-    maxZoom: 18,
-    id: "dark-v10",
-    accessToken: API_KEY
-  });
+//   var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+//     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+//     maxZoom: 18,
+//     id: "dark-v10",
+//     accessToken: API_KEY
+//   });
 
   // Define a baseMaps object to hold our base layers
   var baseMaps = {
     "Street Map": streetmap,
-    "Dark Map": darkmap
+    // "Dark Map": darkmap
   };
 
   // Create overlay object to hold our overlay layer
@@ -61,12 +65,12 @@ function createMap(earthquakes) {
     Earthquakes: earthquakes
   };
 
-  // Create our map, giving it the streetmap and earthquakes layers to display on load
-  var myMap = L.map("map", {
+  // Create our map of San Francisco, giving it the streetmap and earthquakes layers to display on load
+  var myMap = L.map("mapid", {
     center: [
-      37.09, -95.71
+      37.09, -122.42
     ],
-    zoom: 5,
+    zoom: 3,
     layers: [streetmap, earthquakes]
   });
 
