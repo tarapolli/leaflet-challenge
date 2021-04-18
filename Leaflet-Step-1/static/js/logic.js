@@ -12,7 +12,7 @@ d3.json(queryUrl).then(function(data) {
   // Once we get a response, send the data.features object to the createFeatures function
   console.log(data.features);
   
-  // Define streetmap and darkmap layers
+  // Define streetmap layers
   var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
     tileSize: 512,
@@ -48,50 +48,52 @@ d3.json(queryUrl).then(function(data) {
     layers: [streetmap]
   });
 
-// Loop through the cities array and create one marker for each city object
-for (var i = 0; i < data.features.length; i++) {
+// // Loop through the cities array and create one marker for each city object
+// for (var i = 0; i < data.features.length; i++) {
 
-  // Conditionals for countries points
-  // var color = "";
-  var color = data.features[i].geometry.coordinates[2];
-//   console.log(color);
-  if (color < 50) {
-    color = "yellow";
-  }
-  else if (color < 75) {
-    color = "blue";
-  }
-  else if (color <200) {
-    color = "green";
-  }
-  else {
-    color = "red";
-  }
+//   // Conditionals for countries points
+//   // var color = "";
+//   var color = data.features[i].geometry.coordinates[2];
+// //   console.log(color);
+//   if (color < 50) {
+//     color = "yellow";
+//   }
+//   else if (color < 75) {
+//     color = "blue";
+//   }
+//   else if (color <200) {
+//     color = "green";
+//   }
+//   else {
+//     color = "red";
+//   }
 
-  coordinates = data.features[i].geometry.coordinates.slice(0,2)
-  // console.log(coordinates)
+//   coordinates = data.features[i].geometry.coordinates.slice(0,2)
+//   console.log(coordinates);
   // radius is earthquake magnitute
-  radius = data.features[i].properties.mag;
+  // radius = data.features[i].properties.mag;
   // console.log(radius);
 
-  // Add circles to map
-  L.circle(data.features.coordinates, {
-    fillOpacity: 0.75,
-    color: "white",
-    fillColor: color,
-    // Adjust radius
-    radius: data.features[i].radius, * 1500
-  }).bindPopup("<h1>" + data.features[i].coordinates + "</h1> <hr> <h3>Points: " + data.features[i].radius + "</h3>").addTo(myMap);
-}
+//   // Add circles to map
+//   L.circle(data.features.coordinates, {
+//     fillOpacity: 0.75,
+//     color: "white",
+//     fillColor: color,
+//     // Adjust radius
+//     // radius: data.features[i].radius, * 1500
+//     radius: data.features[i].properties.mag, * 1500
+//   }).bindPopup("<h1>" + data.features[i].coordinates + "</h1> <hr> <h3>Points: " + data.features[i].properties.mag + "</h3>").addTo(myMap);
+// }
+
+//   // Create a layer control
+//   // Pass in our baseMaps and overlayMaps
+//   // Add the layer control to the map
+//   L.control.layers(baseMaps, overlayMaps, {
+//     collapsed: false
+//   }).addTo(myMap);
+
+// })
 
 
-  // Create a layer control
-  // Pass in our baseMaps and overlayMaps
-  // Add the layer control to the map
-  L.control.layers(baseMaps, overlayMaps, {
-    collapsed: false
-  }).addTo(myMap);
 
 })
-
-
