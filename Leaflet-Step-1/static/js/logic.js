@@ -92,16 +92,6 @@ function createMap(earthquakes) {
           mags = [0, 1, 2, 3, 4, 5],
           labels = [];
 
-// convert color function to be used when creating the legend
-// function getColor(propMag) { 
-//   return propMag > 5  ? '#ff3355' :   
-//          propMag > 4  ? '#ff7733' :
-//          propMag > 3  ? '#fec919' :
-//          propMag > 2  ? '#fedb65' :
-//          propMag > 1  ? '#88ff33' : 
-//                         '#88ff33';
-// }
-
 // onvert color function to be used when creating the legend
       function getColor(propMag) {
       if (propMag > 5) {
