@@ -3,7 +3,7 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 
 d3.json(queryUrl).then(function(data) { 
   createFeatures(data.features);
-  console.log(data.features)
+  // console.log(data.features)
 });
 
 // binding a pop-up to each layer
@@ -14,7 +14,7 @@ function createFeatures(earthquakeData) {
       "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
   }
   // allow circle size increase
-  function magnitude(depth) {
+  function magSize(depth) {
     return depth * 8000;
   }
 
@@ -44,7 +44,7 @@ function createFeatures(earthquakeData) {
   var earthquakes = L.geoJSON(earthquakeData, {
     pointToLayer: function(earthquakeData, latlng) {
       return L.circle(latlng, {
-        radius: magnitude(earthquakeData.properties.mag),
+        radius: magSize(earthquakeData.properties.mag),
         color: color(earthquakeData.properties.mag),
         fillOpacity: 1
       });
@@ -86,22 +86,42 @@ function createMap(earthquakes) {
 // Set up the legend
   var legend = L.control({position: 'bottomright'});
   
-  legend.onAdd = function (map) {
+  legend.onAdd = function () {
   
       var div = L.DomUtil.create('div', 'info legend'),
           mags = [0, 1, 2, 3, 4, 5],
           labels = [];
 
-// color function to be used when creating the legend
-    function getColor(propMag) { 
-          return propMag > 5  ? '#ff3355' :   
-                 propMag > 4  ? '#ff7733' :
-                 propMag > 3  ? '#fec919' :
-                 propMag > 2  ? '#fedb65' :
-                 propMag > 1  ? '#88ff33' : 
-                                '#88ff33';
-    }
-        
+// convert color function to be used when creating the legend
+// function getColor(propMag) { 
+//   return propMag > 5  ? '#ff3355' :   
+//          propMag > 4  ? '#ff7733' :
+//          propMag > 3  ? '#fec919' :
+//          propMag > 2  ? '#fedb65' :
+//          propMag > 1  ? '#88ff33' : 
+//                         '#88ff33';
+// }
+
+// onvert color function to be used when creating the legend
+      function getColor(propMag) {
+      if (propMag > 5) {
+          return '#ff3355'
+        } else if (propMag > 4) {
+           return '#ff7733'
+        } else if (propMag > 3) {
+            return '#fec919'
+        } else if (propMag > 2) {
+            return '#fedb6'
+        } else if (propMag > 1) {
+            return '#88ff33'
+        } else {
+            return '#88ff33'
+        }
+      };
+
+
+
+
       for (var i = 0; i < mags.length; i++) {
           div.innerHTML +=
               '<i style="background:' + getColor(mags[i] + 1) + '"></i> ' +
@@ -112,5 +132,5 @@ function createMap(earthquakes) {
   };
   // Add legend to map
   legend.addTo(myMap);
-}
+};
 
